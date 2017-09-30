@@ -5,6 +5,7 @@
 struct borders_s {
 	unsigned long int left;
 	unsigned long int right;
+	unsigned long int *sum;
 };
 typedef struct borders_s borders;
 
@@ -12,18 +13,19 @@ typedef struct borders_s borders;
 void* thread_function(void* limits) {
 	int i;
 
-	for(i = ((borders *)limits)->left; i < ((borders *)limits)->right; i++) {
-		sum += i;
-		printf("In thread sum = %lu\n", sum);
+	for(i = ((borders *)limits)->left; i <= ((borders *)limits)->right; i++) {
+		*(((borders *)limits)->sum) += i;
 	}
 
-	return (void *)&sum;
+	printf("Left: %lu; right: %lu; sum: %lu\n", ((borders *)limits)->left, ((borders *)limits)->right, *(((borders *)limits)->sum) );
+
+	return (void *)NULL;
 }
 
 
 int main(int argc, char *argv[]) {
 
-	long unsigned int result = 0, left, right, *ret_ptr, *;
+	long unsigned int result = 0, left, right, *vars, len;
 	int i, n;
 
 	if(argc != 4) {
@@ -37,18 +39,24 @@ int main(int argc, char *argv[]) {
 
 	borders* thread_args = (borders *)malloc(n * sizeof(borders));
 	pthread_t* threads = (pthread_t *)malloc(n * sizeof(pthread_t));
-	
+	vars = (long unsigned int *)malloc(n * sizeof(long unsigned int));
+
+	len = right - left + 1;
 
 	for(i = 0; i < n; i++) {
-		if(i <= (right - left)%n) {
-			thread_args[i].left = left + i*( (right - left)/n + 1 );
-			thread_args[i].right = left + (i + 1)*( (right - left)/n + 1 );
+		thread_args[i].left = left;
+		if(i < len%n) {
+			thread_args[i].right = left + len/n + 1;
+			left += len/n + 1;
 		}
 		else {
-			thread_args[i].left = left + i*( (right - left)/n );
-			thread_args[i].left = left + i*( (right - left)/n );
+			thread_args[i].right = left + len/n;
+			left += len/n;
 		}
+
+		thread_args[i].sum = &( vars[i] );
 	}
+
 
 	for(i = 0; i < n; i++)
 		pthread_create(
@@ -59,14 +67,16 @@ int main(int argc, char *argv[]) {
 		);
 
 
-	for(i = 0; i < n; i++) {
-		pthread_join( threads[i], (void **)&ret_ptr );
-		result += *ret_ptr;
-	}
+	for(i = 0; i < n; i++)
+		pthread_join( threads[i], (void **)NULL );
+
+	for(i = 0; i < n; i++)
+		result += vars[i];
 
 	printf("Sum is: %lu\n", result);
 
 	free(thread_args);
 	free(threads);
+	free(vars);
 	return 0;
 }
