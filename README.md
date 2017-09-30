@@ -1,2 +1,2 @@
-# miscellanous
+# Miscellanous
 Random pieces of code
