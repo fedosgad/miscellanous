@@ -46,11 +46,11 @@ int main(int argc, char *argv[]) {
 	for(i = 0; i < n; i++) {
 		thread_args[i].left = left;
 		if(i < len%n) {
-			thread_args[i].right = left + len/n + 1;
+			thread_args[i].right = left + len/n;
 			left += len/n + 1;
 		}
 		else {
-			thread_args[i].right = left + len/n;
+			thread_args[i].right = left + len/n - 1;
 			left += len/n;
 		}
 
