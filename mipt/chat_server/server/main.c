@@ -163,3 +163,4 @@ FILE* init() {
 		//we are done here
 	return tmp_chat_log;
 }
+
