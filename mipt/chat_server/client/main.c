@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <error.h>
 #include <errno.h>
 #include <pthread.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <signal.h>
 
 #include "main.h"
 #include "tui.h"
@@ -14,14 +16,36 @@
 
 int main(int argc, char* argv[]) {
 
-	
+	pthread_t* tui_thread;
+	int number, flag = 0, status;
+	main_stop = 0;
 
 	if(argc != 3)
 		error(1, 0, "Usage: %s <IP> <Port>", argv[0]);
 
 	init(argv);
 
-	
+	while(main_stop != 1) {
+		scanf("%i", &number);
+		if(number == 0) {
+			main_stop = 1;
+			flag = 1;
+		}
+		while(!flag) {
+			status = send(main_socket, &number, sizeof(int), MSG_CONFIRM);
+			status != -1 ? flag = 1 : log_action("Can't send number");
+		}
+		flag = 0;
+	}
+
+	number = 0;
+	while(!flag) {
+		status = send(main_socket, &number, sizeof(int), MSG_CONFIRM);
+		status != -1 ? flag = 1 : log_action("Can't send number");
+	}
+	flag = 0;
+
+	deinit();
 
 	return 0;
 }
@@ -32,6 +56,7 @@ void init(char* argv[]) {
 	int tries = 0, flag = 0, status;
 	struct sockaddr_in serv_addr;
 
+	signal(SIGINT, sigint_handler);
 /* Whatever we try to do here, we try to do it MAX_TRIES times 
  * We log every step if we can (if we have log file)
  */
@@ -92,3 +117,36 @@ void init(char* argv[]) {
 	return;
 }
 
+void server_interaction() {
+
+	
+
+	return;
+}
+
+void deinit() {
+
+	int flag = 0, status;
+
+	while(!flag) {		//close client_socket
+		status = close(main_socket);
+		if(status == -1) {
+			error(0, errno, "Failed to close socket");
+			log_action_num("Failed to close socket", main_socket);
+		}
+		else
+			flag = 1;
+	}
+	flag = 0;
+	log_action_num("Closed main socket", main_socket);
+
+	fclose(client_log_file);
+	printf("Client_log_closed\n");
+
+	return;
+}
+
+void sigint_handler(int signum) {
+	main_stop = 1;
+	return;
+}

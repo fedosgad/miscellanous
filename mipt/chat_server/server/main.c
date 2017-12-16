@@ -9,12 +9,15 @@
 #include <sys/socket.h>	//socket functions
 #include <arpa/inet.h>	//htonl() and struct sockaddr_in
 #include <sys/ipc.h>
-#include <sys/msg.h>//message queues
+#include <sys/msg.h>	//message queues
+#include <signal.h>	//signal()
 
 #include "main.h"
 #include "client_interaction.h"
 #include "debug.h"
 #include "misc.h"
+
+
 
 int main(int argc, char* argv[]) {
 
@@ -26,36 +29,21 @@ int main(int argc, char* argv[]) {
 	int total_threads = 0, status, flag = 0, too_much_threads = 0;
 
 	idle_threads = 0;
+	main_stop = 0;
 	tmp_chat_log = init();
 
-	pthread_mutex_init(&idle_threads_mutex, NULL);
-	pthread_mutex_init(&server_log_file_mutex, NULL);
-	pthread_mutex_init(&passwd_file_mutex, NULL);
-	pthread_mutex_init(&messages_mutex, NULL);
-
 	thread_id = (pthread_t*)malloc(sizeof(pthread_t));	//create 1 thread
-	while(!flag) {
-		status = pthread_create(&(thread_id[0]), (pthread_attr_t*)NULL, handle_connection, (void*)NULL);
-		if(status != 0) {
-			log_action("Failed to create first thread");
-			error(0, status, "Failed to create first thread");
-		}
-		else
-			flag = 1;
-	}
-	flag = 0;
-	log_action_num("Created first thread, id", (ulong)thread_id[0]);
-	total_threads = 1;
+	create_new_thread(&(thread_id[0]), handle_connection);
+	total_threads += 1;
 
-	pthread_mutex_lock(&idle_threads_mutex);
-	idle_threads += 1;
-	pthread_mutex_unlock(&idle_threads_mutex);
+	idle_threads_inc();
 
 	log_action("Enter main loop");
-	while(!flag) {
+	while(!main_stop) {
 		if(idle_threads != 1) {		//thread management
-			if( (idle_threads < 1)&&(total_threads <= MAX_THREADS) ) {	//not enogh threads - WE MUST CONSTRUCT ADDITIONAL THREADS (if we can)
+			if( (idle_threads < 1)&&(total_threads < MAX_THREADS) ) {	//not enogh threads - WE MUST CONSTRUCT ADDITIONAL THREADS (if we can)
 				thread_id = (pthread_t*)realloc((void*)thread_id, (total_threads + 1)*sizeof(pthread_t));
+				create_new_thread(&(thread_id[total_threads]), handle_connection);
 				total_threads++;	//better check that everything is OK
 				idle_threads_inc();
 			}
@@ -79,6 +67,7 @@ int main(int argc, char* argv[]) {
 				thread_id = shrink_threads_array((void *)thread_id, total_threads, incoming_join_request.id);
 				total_threads -= 1;
 				idle_threads_dec();
+				too_much_threads = 0;
 				log_action_num("Total threads now", total_threads);
 				log_action_num("Idle threads now", idle_threads);
 			}
@@ -89,15 +78,7 @@ int main(int argc, char* argv[]) {
 	}
 
 
-	pthread_join(thread_id[0], (void**)NULL);
-	free(thread_id);
-
-	pthread_mutex_destroy(&idle_threads_mutex);
-	pthread_mutex_destroy(&server_log_file_mutex);
-	pthread_mutex_destroy(&passwd_file_mutex);
-	pthread_mutex_destroy(&messages_mutex);
-
-	//~ deinit();
+	deinit(thread_id, tmp_chat_log);
 
 
 	return 0;
@@ -110,6 +91,13 @@ FILE* init() {
 	struct sockaddr_in serv_addr;
 	FILE* tmp_chat_log;
 	key_t join_request_queue;
+
+	pthread_mutex_init(&idle_threads_mutex, NULL);
+	pthread_mutex_init(&server_log_file_mutex, NULL);
+	pthread_mutex_init(&passwd_file_mutex, NULL);
+	pthread_mutex_init(&messages_mutex, NULL);
+
+	signal(SIGINT, sigint_handler);
 
 /* Whatever we try to do here, we try to do it MAX_TRIES times 
  * We log every step if we can (if we have log file)
@@ -273,6 +261,46 @@ pthread_t* shrink_threads_array(void* array, int length, pthread_t id) {
 	flag = 0;
 
 	return new_array;
+
+}
+
+
+void deinit(pthread_t* thread_id, FILE* tmp_chat_log) {
+
+	log_action("Deinitializing");
+
+	//TODO: notify threads to join
+
+	//~ pthread_join(thread_id[0], (void**)NULL);
+	//~ free(thread_id);
+	//~ log_action("Joined all threads");
+
+	//TODO: save chat logs
+
+	close(main_socket);
+	msgctl(join_request_qd, IPC_RMID, NULL);
+
+	fclose(passwd_file);
+	log_action("Closed passwords file");
+	fclose(server_log_file);
+	printf("Closed log file\n");
+
+	pthread_mutex_destroy(&idle_threads_mutex);
+	pthread_mutex_destroy(&server_log_file_mutex);
+	pthread_mutex_destroy(&passwd_file_mutex);
+	pthread_mutex_destroy(&messages_mutex);
+
+	return;
+}
+
+
+void sigint_handler(int signum) {
+	if(signum != SIGINT)
+		return;
+	else {
+		main_stop = 1;
+		return;
+	}
 
 }
 

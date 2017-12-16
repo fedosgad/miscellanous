@@ -11,8 +11,10 @@
 void* handle_connection(void* arg);		//thread body
 FILE* init();				//returns tmp chat log descriptor
 pthread_t* shrink_threads_array(void* array, int length, pthread_t id);
-//~ void deinit();
+void deinit(pthread_t* thread_id, FILE* tmp_chat_log);
+void sigint_handler(int signum);
 
+static int main_stop;
 
 pthread_mutex_t idle_threads_mutex;
 pthread_mutex_t server_log_file_mutex;

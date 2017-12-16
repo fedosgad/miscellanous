@@ -1,14 +1,14 @@
 struct message_s {
 	time_t timestamp;
 	char* msg_text;
-	int type;			//0 - text; 1 - command
+	int type;
 	char* client_name;
 	int msg_id;
 };
 typedef struct message_s msg_t;
 
 struct join_request_s {
-	long int type;	//always 1
+	long int type;	//1 - thread to main, 2 - reverse
 	pthread_t id;
 };
 typedef struct join_request_s join_request;

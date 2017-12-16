@@ -17,7 +17,7 @@
 void* handle_connection(void* arg) {
 
 	int client_socket;
-	int flag = 0, status, buf = 0;
+	int flag = 0, status, buf = -1;
 	msg_t* last_msg_local;
 	join_request join_buf;
 
@@ -41,17 +41,19 @@ void* handle_connection(void* arg) {
 	idle_threads -= 1;
 	pthread_mutex_unlock(&idle_threads_mutex);
 
-	while(!flag){		//receive number (payload)
-		status = recv(client_socket, (void*)&buf, (size_t)sizeof(int), 0);
-		if (status == -1) {
-			if( !((errno == EAGAIN)||(errno == EWOULDBLOCK)) )
-				log_action("Thread failed to receive");
+	while(buf) {		//receive numbers (payload) (0 is end-of-communication)
+		while(!flag){
+			status = recv(client_socket, (void*)&buf, (size_t)sizeof(int), 0);
+			if (status == -1) {
+				if( !((errno == EAGAIN)||(errno == EWOULDBLOCK)) )
+					log_action("Thread failed to receive");
+			}
+			else
+				flag = 1;
 		}
-		else
-			flag = 1;
+		flag = 0;
+		log_action_num("Received number", buf);
 	}
-	flag = 0;
-	log_action_num("Thread received number", buf);
 
 
 	while(!flag) {		//close client_socket
@@ -72,9 +74,7 @@ void* handle_connection(void* arg) {
 	}
 
 
-	pthread_mutex_lock(&idle_threads_mutex);
-	idle_threads += 1;
-	pthread_mutex_unlock(&idle_threads_mutex);
+	idle_threads_inc();
 
 	log_action_num("Thread joins, id", (ulong)pthread_self());
 	return NULL;
