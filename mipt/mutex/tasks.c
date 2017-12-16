@@ -32,7 +32,6 @@ pthread_mutex_t lock;
 void* thread_body( void* inp ) {
 
 	int i, flag = 0;
-	static int tasks_done = 0;
 
 
 	while( !flag ) {
@@ -40,28 +39,27 @@ void* thread_body( void* inp ) {
 		flag = 1;
 
 		for(i = 0; i < TASKS; i++) {
+			pthread_mutex_lock( &lock );
 			if(tasks[i].status == NEW) {
-				if(pthread_mutex_trylock( &lock ) == 0) {
 
-					printf("Thread ID %u, %i tasks already done, taking task ID %i\n", (unsigned int)pthread_self(), tasks_done, tasks[i].id);
+				printf("Thread ID %u, %i tasks already done, taking task ID %i\n", (unsigned int)pthread_self(), *((int *)inp), tasks[i].id);
 
-					tasks[i].status = PROCESSING;
-					tasks[i].worker = pthread_self();
-					pthread_mutex_unlock( &lock );
+				tasks[i].status = PROCESSING;
+				tasks[i].worker = pthread_self();
+				pthread_mutex_unlock( &lock );
 
-					usleep( tasks[i].time );
+				usleep( tasks[i].time );
 
-					tasks[i].status = DONE;
-					tasks_done++;
-					flag = 0;
-					break;
-				}
-				else ;
+				tasks[i].status = DONE;
+				(*((int *)inp))++;
+				flag = 0;
+				break;
 			}
+			else pthread_mutex_unlock( &lock );
 		}
 	}
 
-	return (void*)&tasks_done;
+	return (void*)NULL;
 }
 
 
@@ -71,6 +69,12 @@ int main(int argc, char* argv[]) {
 	pthread_mutex_init( &lock, NULL );
 
 	srand( (int)time( NULL ) );
+
+	thread_ret = (int *)malloc(THREADS*sizeof(int));
+
+	for(i = 0; i < THREADS; i++)
+		thread_ret[i] = 0;
+
 
 	for(i = 0; i < TASKS; i++) {
 		tasks[i].time = rand()%1000;
@@ -84,18 +88,20 @@ int main(int argc, char* argv[]) {
 				&(workers_list[i]),
 				(pthread_attr_t *)NULL,
 				thread_body,
-				(void *)NULL
+				(void *)&(thread_ret[i])
 		);
 	}
 
-	for(i = 0; i < THREADS; i++ ) {
-		pthread_join( workers_list[i], (void **)&thread_ret );
-		total_tasks_done += *thread_ret;
-	}
+	for(i = 0; i < THREADS; i++ )
+		pthread_join( workers_list[i], (void **)NULL );
+
+	for(i = 0; i < THREADS; i++ )
+		total_tasks_done += thread_ret[i];
 
 	printf("Total tasks done: %i\n", total_tasks_done);
 
 	pthread_mutex_destroy( &lock );
+	free(thread_ret);
 
 	return 0;
 }
