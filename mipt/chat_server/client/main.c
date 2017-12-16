@@ -8,6 +8,7 @@
 #include <arpa/inet.h>
 
 #include "main.h"
+#include "tui.h"
 #include "debug.h"
 
 
