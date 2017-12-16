@@ -1,6 +1,6 @@
 #include <stdio.h>	//general IO
 #include <stdlib.h>	//malloc()
-//#include <unistd.h>
+#include <unistd.h>	//close()
 #include <pthread.h>	//threads
 #include <error.h>	//error()
 #include <errno.h>	//error codes
@@ -63,18 +63,17 @@ FILE* init() {
  */
 
 	while((tries < MAX_TRIES) && !flag ) {		//log file itself
-		printf("Trying ot open log file\n");
+		printf("Trying to open log file\n");
 		server_log_file = fopen(SERVER_LOG_FILE, "a");
 		server_log_file != NULL ? flag = 1 : tries++;
 	}
-	if (!flag) {
+	if (!flag) 
 		error(1, errno, "Can't open or create log file");
-	}
-	else {
-		log_action("Server started");
-		flag = 0;
-		tries = 0;
-	}
+	flag = 0;
+	tries = 0;
+	setlinebuf(server_log_file);		//if we don't, we'll never see our logs
+	log_action("Server started");
+
 
 	while((tries < MAX_TRIES) && !flag ) {		//tmp log file for chat messages
 		log_action("Trying to open temporary chat log");
