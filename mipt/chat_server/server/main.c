@@ -1,6 +1,6 @@
 #include <stdio.h>	//general IO
 #include <stdlib.h>	//malloc()
-#include <unistd.h>
+//#include <unistd.h>
 #include <pthread.h>	//threads
 #include <error.h>	//error()
 #include <errno.h>	//error codes
@@ -10,31 +10,9 @@
 #include <arpa/inet.h>	//htonl() and struct sockaddr_in
 
 
+#include "main.h"
 #include "client_interaction.h"
-
-
-#define PORT 12345
-#define MAX_THREADS 100
-#define MAX_TRIES 10
-
-#define PASSWD_FILE "passwd.db"
-#define CHAT_LOG_FILE "chat_log"
-#define SERVER_LOG_FILE "server_log"
-
-
-
-//void* handle_connection(void* );
-FILE* init();				//returns tmp chat log descriptor
-void log_action(const char* text);
-//~ void deinit();
-
-
-extern int idle_threads;
-extern msg_t* msg_list;		//connected list of messages
-
-int socketfd;
-FILE* server_log_file;
-
+#include "debug.h"
 
 int main(int argc, char* argv[]) {
 
@@ -42,25 +20,35 @@ int main(int argc, char* argv[]) {
 	FILE* tmp_chat_log;
 	pthread_t *thread_id;
 
-	int total_threads = 0;
+	int total_threads = 0, status, flag = 0;
 
 	tmp_chat_log = init();
 
 
+	thread_id = (pthread_t*)malloc(sizeof(pthread_t));
+	while(!flag) {
+		status = pthread_create(&(thread_id[0]), (pthread_attr_t*)NULL, handle_connection, (void*)NULL);
+		if(status != 0) {
+			log_action("Failed to create first thread");
+			error(0, status, "Failed to create first thread");
+		}
+		else
+			flag = 1;
+	}
+	flag = 0;
+	log_action_num("Created first thread, id", (int)thread_id[0]);
+	total_threads = 1;
+
+
+	
+
+
+	pthread_join(thread_id[0], (void**)NULL);
+	free(thread_id);
 	//~ deinit();
 
+
 	return 0;
-}
-
-
-void log_action(const char* text) {
-
-	printf("%s\n", text);
-	fprintf(server_log_file, "%ld ", (long int)time(NULL));		//timestamp
-	fprintf(server_log_file, "%s\n", text);
-
-	return;
-
 }
 
 
@@ -89,9 +77,9 @@ FILE* init() {
 	}
 
 	while((tries < MAX_TRIES) && !flag ) {		//tmp log file for chat messages
+		log_action("Trying to open temporary chat log");
 		tmp_chat_log = tmpfile();
 		tmp_chat_log != NULL ? flag = 1 : tries++;
-		log_action("Trying to open temporary chat log");
 	}
 	if (!flag) {
 		log_action("Can't open temporary chat log");
@@ -104,35 +92,33 @@ FILE* init() {
 	}
 
 
-/* TODO: password file
-	while((tries < MAX_TRIES) && !flag ) {
-		
-		 ? flag = 1 : tries++;
-		log_action("");
+	while((tries < MAX_TRIES) && !flag ) {		//passwords file
+		log_action("Try to open or create passwords file");
+		passwd_file = fopen(PASSWD_FILE, "a+");
+		passwd_file != NULL ? flag = 1 : tries++;
 	}
 	if (!flag) {
-		log_action("")
-		error(1, errno, "");
+		log_action("Could not open or create passwords file");
+		error(1, errno, "Could not open or create passwords file");
 	}
 	else {
-		log_action("");
+		log_action("Passwords file opened");
 		flag = 0;
 		tries = 0;
 	}
-*/
 
 
 	while((tries < MAX_TRIES) && !flag ) {		//create socket
-		socketfd = socket(AF_INET, SOCK_STREAM, 0);
-		socketfd != -1 ? flag = 1 : tries++;
 		log_action("Trying to create socket");
+		main_socket = socket(AF_INET, SOCK_STREAM|SOCK_NONBLOCK, 0);	//nonblcking socket because we don't want to wait checking for incoming connections
+		main_socket != -1 ? flag = 1 : tries++;
 	}
 	if (!flag) {
 		log_action("Can't create socket");
 		error(1, errno, "Can't create socket");
 	}
 	else {
-		log_action("Socket created");
+		log_action_num("Socket created, descriptor", main_socket);
 		flag = 0;
 		tries = 0;
 	}
@@ -145,9 +131,9 @@ FILE* init() {
 
 
 	while((tries < MAX_TRIES) && !flag ) {		//bind socket
-		status = bind(socketfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
-		status != -1 ? flag = 1 : tries++;
 		log_action("Try to bind socket");
+		status = bind(main_socket, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
+		status != -1 ? flag = 1 : tries++;
 	}
 	if (!flag) {
 		log_action("Can't bind socket");
@@ -161,9 +147,9 @@ FILE* init() {
 
 
 	while((tries < MAX_TRIES) && !flag ) {		//listen on the socket
-		status = listen(socketfd, MAX_THREADS);	//we won't accept more clients than we can handle
-		status != -1 ? flag = 1 : tries++;
 		log_action("Trying to listen on the socket");
+		status = listen(main_socket, MAX_THREADS);	//we won't accept more clients than we can handle
+		status != -1 ? flag = 1 : tries++;
 	}
 	if (!flag) {
 		log_action("Can't listen on the socket");
