@@ -98,7 +98,7 @@ int main(int argc, char* argv[]) {
 
 
 	printf("\n");
-	for(i = 0; i < 6; i++)
+	for(i = 0; i < 7; i++)
 		printf("a[%i] = %f\n", i, a[i]);
 
 
