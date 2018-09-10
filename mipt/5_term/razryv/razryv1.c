@@ -22,6 +22,8 @@ FTYPE input_exp(char* var_name);
 
 int main(int argc, char* argv[]) {
 
+	int i;
+
 	FTYPE gamma0, rho0, P0, U0;
 	FTYPE gamma3, rho3, P3, U3;
 	FTYPE a[7];	//coefficients
@@ -39,7 +41,7 @@ int main(int argc, char* argv[]) {
 	U3 = input_exp("U3");
 	P3 = input_exp("P3");
 
-	PRINT_VALUES();
+	//~ PRINT_VALUES();
 
 
 	FTYPE X, alpha0, alpha3, e0, e3, C0, C3;	//intermediate vars
@@ -95,6 +97,9 @@ int main(int argc, char* argv[]) {
 	a[6] = pow(X, 4)*(sq(e3 - e0) + 1 - 2*(e3 + e0));
 
 
+	printf("\n");
+	for(i = 0; i < 6; i++)
+		printf("a[%i] = %f\n", i, a[i]);
 
 
 	return 0;
