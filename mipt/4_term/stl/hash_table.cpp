@@ -21,6 +21,8 @@ private:
 
 	vector<list<pair<TKEY, TVAL> > > storage;
 
+	int total_elements = 0;
+
 	int hash(int key) {
 		return 0;
 	}
