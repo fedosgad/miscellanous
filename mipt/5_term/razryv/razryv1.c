@@ -26,6 +26,7 @@ FTYPE input_exp(char* var_name, int quiet);
 int main(int argc, char* argv[]) {
 
 	int i, opt, var, debug, quiet;
+	int coefs_only, intervals_only;
 
 	FTYPE gamma0, rho0, P0, U0;
 	FTYPE gamma3, rho3, P3, U3;
@@ -34,8 +35,10 @@ int main(int argc, char* argv[]) {
 	var = 1;	//default variant
 	debug = 0;	//debugging off by default
 	quiet = 0;	//prompt user for input
+	coefs_only = 0;	//don't stop on coefs
+	intervals_only = 0;	//don't stop on intervals
 
-	while((opt = getopt(argc, argv, "12vhq")) != -1) {
+	while((opt = getopt(argc, argv, "12vhqci")) != -1) {
 		switch(opt) {
 		case '1':
 			var = 1;
@@ -56,6 +59,14 @@ int main(int argc, char* argv[]) {
 
 		case 'q':
 			quiet = 1;
+			break;
+
+		case 'c':
+			coefs_only = 1;
+			break;
+
+		case 'i':
+			intervals_only = 1;
 			break;
 
 		default:
@@ -143,10 +154,12 @@ int main(int argc, char* argv[]) {
 		exit(1);
 	}
 
-	if(debug) {
+	if(debug | coefs_only) {	//print coefs
 		for(i = 0; i < 7; i++)
 			printf("a[%i] = %f\n", i, a[i]);
 	}
+	if(coefs_only)
+		return(0);
 
 	return 0;
 }
