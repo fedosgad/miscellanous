@@ -62,15 +62,15 @@ int main(int argc, char* argv[]) {
 
 	a[1] = 2*((alpha0*e3 - alpha3*X*e0)*(e3*(1 - 2*alpha0*X) \
 		- e0*X*(X - 2*alpha3)) - alpha0*alpha3*X*(alpha0*e3 \
-		- alpha3*X*e0));
+		+ alpha3*X*e0));
 
 	a[2] = sq(e3)*(6*sq(alpha0)*sq(X) - 8*alpha0*X + 1) \
 		- 2*e0*e3*X*(alpha0*alpha3*(sq(X) + 4*X + 1) \
 		- 2*(X + 1)*(alpha3 + alpha0*X) + X) \
-		+ sq(e0)*sq(X)*(6*sq(alpha3)* - 8*alpha3*X + sq(X)) \
+		+ sq(e0)*sq(X)*(6*sq(alpha3) - 8*alpha3*X + sq(X)) \
 		+ sq(alpha0)*sq(alpha3)*sq(X) \
-		- 2*alpha0*X*e3*(alpha0*X + 2*alpha0*alpha3*X + 2*alpha3) \
-		- 2*alpha3*sq(X)*e0*(alpha3 + 2*alpha0*X + 2*alpha0*alpha3);
+		- 2*alpha0*X*e3*(alpha0*X - 2*alpha0*alpha3*X + 2*alpha3) \
+		- 2*alpha3*sq(X)*e0*(alpha3 + 2*alpha0*X - 2*alpha0*alpha3);
 
 	a[3] = -2*X*(2*sq(e3)*(sq(alpha0)*sq(X) - 3*alpha0*X + 1) \
 		+ e0*e3*((alpha3 + alpha0*X)*(sq(X) + 4*X + 1) \
@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
 		+ 2*sq(e0)*X*(sq(X) - 3*alpha3*X + sq(alpha3)) \
 		- alpha0*alpha3*X*(alpha0*X + alpha3) \
 		+ e3*(sq(alpha0)*alpha3*sq(X) - 2*X*(2*alpha0*alpha3 \
-		+ sq(alpha0)) + (2*alpha0*X + alpha3)) \
+		+ sq(alpha0)*X) + (2*alpha0*X + alpha3)) \
 		+ e0*X*(alpha0*sq(alpha3) - 2*alpha3*(alpha3 + 2*alpha0*X)\
 		+ 2*alpha3*X + alpha0*sq(X)));
 
@@ -91,7 +91,7 @@ int main(int argc, char* argv[]) {
 		- 2*X*(2*alpha3 + alpha0*X) + sq(X)));
 
 	a[5] = 2*pow(X, 3)*(sq(e3)*(alpha0*X - 2) - e0*e3*(alpha0*X - 2 \
-		+ alpha3 -2*X) + sq(e0)*(alpha3 - 2*X) + (alpha3 + alpha0*X) \
+		+ alpha3 - 2*X) + sq(e0)*(alpha3 - 2*X) + (alpha3 + alpha0*X) \
 		- e3*(2*alpha0*X + alpha3 - 2) - e0*(2*alpha3 + alpha0*X - 2*X));
 
 	a[6] = pow(X, 4)*(sq(e3 - e0) + 1 - 2*(e3 + e0));
