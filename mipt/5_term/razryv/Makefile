@@ -1,9 +1,11 @@
 NAME = razryv1
 
-.PHONY: all clean clean_all
+.PHONY: compile all clean clean_all
 
-all:
+compile:
 	gcc -o $(NAME) $(NAME).c -lm
+
+all: compile
 	./gen_results.sh
 
 clean:
@@ -11,4 +13,4 @@ clean:
 	rm -f $(NAME)
 
 clean_all: clean
-	rm -r results
+	rm -rf results
