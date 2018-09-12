@@ -1,4 +1,4 @@
-NAME = razryv1
+NAME = razryv
 
 .PHONY: compile all clean clean_all
 
