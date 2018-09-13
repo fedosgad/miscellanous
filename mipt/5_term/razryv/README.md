@@ -6,6 +6,10 @@ Compile:
 
 	make
 
+Compile with debug support:
+
+	make debug
+
 Calculate results and drop them to the results/ folder (Unix only)
 
 	./gen_results.sh
@@ -28,3 +32,6 @@ General help (also available using -h option):
 	Data format:
 	a/b for gamma (for example, "5/3"),
 	a.bEc for everything else (for example 1.2E3).
+
+	In the first var. you enter U, then P.
+	In the second var. you first enter P, then U.

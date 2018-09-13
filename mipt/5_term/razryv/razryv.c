@@ -5,16 +5,6 @@
 
 
 #define FTYPE float //change this to double for greater precesion
-#define PRINT_VALUES() printf("%f\n%f\n%f\n%f\n%f\n%f\n%f\n%f\n", \
-		gamma0,\
-		rho0,\
-		P0,\
-		U0,\
-		gamma3,\
-		rho3,\
-		P3,\
-		U3\
-	)
 
 
 void usage();
@@ -30,6 +20,7 @@ int main(int argc, char* argv[]) {
 
 	FTYPE gamma0, rho0, P0, U0;
 	FTYPE gamma3, rho3, P3, U3;
+	FTYPE C3;
 	FTYPE a[7];	//coefficients
 
 	var = 1;	//default variant
@@ -77,41 +68,70 @@ int main(int argc, char* argv[]) {
 
 
 	//time to enter values
-	gamma0 = input_fract("gamma0", quiet);
-	rho0 = input_exp("rho0", quiet);
-	U0 = input_exp("U0", quiet);
-	P0 = input_exp("P0", quiet);
+	if(var == 1) {
+		gamma0 = input_fract("gamma0", quiet);
+		rho0 = input_exp("rho0", quiet);
+		U0 = input_exp("U0", quiet);
+		P0 = input_exp("P0", quiet);
 
-	gamma3 = input_fract("gamma3", quiet);
-	rho3 = input_exp("rho3", quiet);
-	U3 = input_exp("U3", quiet);
-	P3 = input_exp("P3", quiet);
+		gamma3 = input_fract("gamma3", quiet);
+		rho3 = input_exp("rho3", quiet);
+		U3 = input_exp("U3", quiet);
+		P3 = input_exp("P3", quiet);
+	}
+	else if(var == 2) {
+		gamma0 = input_fract("gamma0", quiet);
+		rho0 = input_exp("rho0", quiet);
+		P0 = input_exp("P0", quiet);
+		U0 = input_exp("U0", quiet);
 
-	if(debug) {
-		printf("Variables:\n");
-		PRINT_VALUES();
+		gamma3 = input_fract("gamma3", quiet);
+		C3 = input_exp("C3", quiet);
+		P3 = input_exp("P3", quiet);
+		U3 = input_exp("U3", quiet);
+	}
+	else {
+		printf("Mysterious error occured\n");
+		exit(1);
 	}
 
-	FTYPE X, alpha0, alpha3, e0, e3, C0, C3;	//intermediate vars
 
-	C0 = sqrt(gamma0*P0/rho0);
-	C3 = sqrt(gamma3*P3/rho3);
+	FTYPE X, alpha0, alpha3, e0, e3, C0;	//intermediate vars
+	FTYPE n, mu, nu, Z, Y;
 
-	X = P3/P0;
-	alpha0 = (gamma0 + 1)/(gamma0 - 1);
-	alpha3 = (gamma3 + 1)/(gamma3 - 1);
+	//calculating intermediate vars
+	if(var == 1) {
+		C0 = sqrt(gamma0*P0/rho0);
+		C3 = sqrt(gamma3*P3/rho3);
 
-	e0 = 2*sq(C0)/(gamma0*(gamma0 - 1)*sq(U3 - U0));
-	e3 = 2*sq(C3)/(gamma3*(gamma3 - 1)*sq(U3 - U0));
+		X = P3/P0;
+		alpha0 = (gamma0 + 1)/(gamma0 - 1);
+		alpha3 = (gamma3 + 1)/(gamma3 - 1);
+
+		e0 = 2*sq(C0)/(gamma0*(gamma0 - 1)*sq(U3 - U0));
+		e3 = 2*sq(C3)/(gamma3*(gamma3 - 1)*sq(U3 - U0));
+	}
+	else if(var == 2) {
+		rho3 = gamma3*P3/sq(C3);
+		alpha0 = (gamma0 + 1)/(gamma0 - 1);
+		n = 2*gamma3/(gamma3 - 1);
+		mu = (U3 - U0)*sqrt((gamma0 - 1)*rho0/(2*P0));
+		nu = 2/(gamma3 - 1)*sqrt(gamma3*(gamma0 - 1)/2 * P3/P0 * rho0/rho3);
+		X = P3/P0;
+	}
+	else {
+		printf("Mysterious error occured\n");
+		exit(1);
+	}
 
 
 	//calculating coefs
 	if(var == 1) {
-		a[0] = sq(alpha0*e3 - alpha3*X*e0);
+		a[0] = sq(alpha0*e3 - alpha3*X*e0);	//Y^6
 
 		a[1] = 2*((alpha0*e3 - alpha3*X*e0)*(e3*(1 - 2*alpha0*X) \
 			- e0*X*(X - 2*alpha3)) - alpha0*alpha3*X*(alpha0*e3 \
-			+ alpha3*X*e0));
+			+ alpha3*X*e0));	//Y^5
 
 		a[2] = sq(e3)*(6*sq(alpha0)*sq(X) - 8*alpha0*X + 1) \
 			- 2*e0*e3*X*(alpha0*alpha3*(sq(X) + 4*X + 1) \
@@ -119,7 +139,7 @@ int main(int argc, char* argv[]) {
 			+ sq(e0)*sq(X)*(6*sq(alpha3) - 8*alpha3*X + sq(X)) \
 			+ sq(alpha0)*sq(alpha3)*sq(X) \
 			- 2*alpha0*X*e3*(alpha0*X - 2*alpha0*alpha3*X + 2*alpha3) \
-			- 2*alpha3*sq(X)*e0*(alpha3 + 2*alpha0*X - 2*alpha0*alpha3);
+			- 2*alpha3*sq(X)*e0*(alpha3 + 2*alpha0*X - 2*alpha0*alpha3);	//Y^4
 
 		a[3] = -2*X*(2*sq(e3)*(sq(alpha0)*sq(X) - 3*alpha0*X + 1) \
 			+ e0*e3*((alpha3 + alpha0*X)*(sq(X) + 4*X + 1) \
@@ -129,7 +149,7 @@ int main(int argc, char* argv[]) {
 			+ e3*(sq(alpha0)*alpha3*sq(X) - 2*X*(2*alpha0*alpha3 \
 			+ sq(alpha0)*X) + (2*alpha0*X + alpha3)) \
 			+ e0*X*(alpha0*sq(alpha3) - 2*alpha3*(alpha3 + 2*alpha0*X)\
-			+ 2*alpha3*X + alpha0*sq(X)));
+			+ 2*alpha3*X + alpha0*sq(X)));	//Y^3
 
 		a[4] = sq(X)*(sq(e3)*(sq(alpha0)*sq(X) - 8*alpha0*X + 6) \
 			- 2*e0*e3*(alpha0*alpha3*X - 2*(X + 1)*(alpha3 + alpha0*X) \
@@ -137,17 +157,28 @@ int main(int argc, char* argv[]) {
 			+ (sq(alpha3) + 4*alpha0*alpha3*X + sq(alpha0)*sq(X)) \
 			- 2*e3*((sq(alpha0)*X + 2*alpha0*alpha3)*X - 2*(2*alpha0*X \
 			+ alpha3) + 1) - 2*e0*(alpha3*(2*alpha0*X + alpha3) \
-			- 2*X*(2*alpha3 + alpha0*X) + sq(X)));
+			- 2*X*(2*alpha3 + alpha0*X) + sq(X)));	//Y^2
 
 		a[5] = 2*pow(X, 3)*(sq(e3)*(alpha0*X - 2) - e0*e3*(alpha0*X - 2 \
 			+ alpha3 - 2*X) + sq(e0)*(alpha3 - 2*X) + (alpha3 + alpha0*X) \
-			- e3*(2*alpha0*X + alpha3 - 2) - e0*(2*alpha3 + alpha0*X - 2*X));
+			- e3*(2*alpha0*X + alpha3 - 2) - e0*(2*alpha3 + alpha0*X - 2*X));	//Y
 
-		a[6] = pow(X, 4)*(sq(e3 - e0) + 1 - 2*(e3 + e0));
+		a[6] = pow(X, 4)*(sq(e3 - e0) + 1 - 2*(e3 + e0));	//1
 	}
 	else if(var == 2) {
-		printf("Not implemented yet.\n");
-		exit(1);
+		a[0] = sq(X);	//Z^2n
+
+		a[1] = -alpha0*sq(nu)*X;	//Z^(n+2)
+
+		a[2] = 2*alpha0*nu*(mu + nu)*X;	//Z^(n + 1)
+
+		a[3] = -(2 + sq(nu + mu)*alpha0)*X;	//Z^n
+
+		a[4] = -sq(nu);	//Z^2
+
+		a[5] = 2*nu*(mu + nu);	//Z
+
+		a[6] = -sq(mu + nu) + 1;	//1
 	}
 	else {
 		printf("Mysterious error occured\n");

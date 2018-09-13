@@ -1,12 +1,15 @@
 NAME = razryv
 
-.PHONY: compile all clean clean_all
+.PHONY: compile all clean clean_all debug
 
 compile:
 	gcc -o $(NAME) $(NAME).c -lm
 
 all: compile
 	./gen_results.sh
+
+debug:
+	gcc -o $(NAME) $(NAME).c -lm -g
 
 clean:
 	rm -f *.o
