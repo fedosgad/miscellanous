@@ -21,7 +21,7 @@ echo "Calculating 1 var. root intervals..."
 \
 for i in $(seq 8)
 	do
-		./razryv -1 -q -i < data/var_1.$i > results/root_intervals/root_intervals_1.$i
+		./razryv -1 -q -i -s 1000000 < data/var_1.$i > results/root_intervals/root_intervals_1.$i
 done
 
 
