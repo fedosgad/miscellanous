@@ -312,21 +312,24 @@ int main(int argc, char* argv[]) {
 
 	for(i = 0; i < segments; i++) {
 		if(var == 1) {
-			if(fval_1(tmp_int.l, a)*fval_1(tmp_int.r, a) < 0) {	//if sign changes, save current interval
-				roots_found++;
-				root_int = (interval*)realloc((void*)root_int, roots_found*sizeof(interval));
-				root_int[roots_found - 1].l = tmp_int.l;
-				root_int[roots_found - 1].r = tmp_int.r;
-			}
+			tmp1 = fval_1(tmp_int.l, a)*fval_1(tmp_int.r, a);
 		}
 		else {
-			printf("Not implemented\n");
-			exit(1);
+			tmp1 = fval_2(tmp_int.l, a, n)*fval_2(tmp_int.r, a, n);
+		}
+
+		if(tmp1 < 0) {	//if sign changes, save current interval
+			roots_found++;
+			root_int = (interval*)realloc((void*)root_int, roots_found*sizeof(interval));
+			root_int[roots_found - 1].l = tmp_int.l;
+			root_int[roots_found - 1].r = tmp_int.r;
 		}
 
 		tmp_int.l += step;
 		tmp_int.r += step;
 	}
+
+
 
 	//find positive root intervals
 	step = (roots_int_pos.r - roots_int_pos.l)/segments;
@@ -335,16 +338,17 @@ int main(int argc, char* argv[]) {
 
 	for(i = 0; i < segments; i++) {
 		if(var == 1) {
-			if(fval_1(tmp_int.l, a)*fval_1(tmp_int.r, a) < 0) {	//if sign changes, save current interval
-				roots_found++;
-				root_int = (interval*)realloc((void*)root_int, roots_found*sizeof(interval));
-				root_int[roots_found - 1].l = tmp_int.l;
-				root_int[roots_found - 1].r = tmp_int.r;
-			}
+			tmp1 = fval_1(tmp_int.l, a)*fval_1(tmp_int.r, a);
 		}
 		else {
-			printf("Not implemented\n");
-			exit(1);
+			tmp1 = fval_2(tmp_int.l, a, n)*fval_2(tmp_int.r, a, n);
+		}
+		
+		if(tmp1 < 0) {	//if sign changes, save current interval
+			roots_found++;
+			root_int = (interval*)realloc((void*)root_int, roots_found*sizeof(interval));
+			root_int[roots_found - 1].l = tmp_int.l;
+			root_int[roots_found - 1].r = tmp_int.r;
 		}
 
 		tmp_int.l += step;
