@@ -35,6 +35,7 @@ int main(int argc, char* argv[]) {
 
 	FTYPE X, alpha0, alpha3, e0, e3, C0;	//intermediate vars
 	FTYPE n, mu, nu, Z, Y, A, B, step;
+	FTYPE tmp1, tmp2;
 	int roots_found, total_pos_roots, total_neg_roots, segments;
 
 	interval roots_int_pos, roots_int_neg;
@@ -207,6 +208,11 @@ int main(int argc, char* argv[]) {
 
 	n = roundf(n);	//because it's integer anyway
 
+	if(verbose && (var == 2)) {
+		printf("\n");
+		printf("n = %f\n", n);
+	}
+
 	//initial localization guess
 	A = max_abs(&(a[1]), 6);
 	B = max_abs(a, 6);
@@ -223,9 +229,44 @@ int main(int argc, char* argv[]) {
 			total_pos_roots++;
 	}
 
-	for(i = 0; i < 6; i++) {
-		if(a[i]*a[i + 1] > 0)
-			total_neg_roots++;
+	if(var == 1) {
+		for(i = 0; i < 6; i++) {
+			if(a[i]*a[i + 1] > 0)
+				total_neg_roots++;
+		}
+	}
+	else {
+		tmp1 = a[0];
+		tmp2 = a[1];
+		for(i = 0; i < 6; i++) {
+			switch(i) {
+			case 0:
+				tmp2 *= pow(-1, n + 2);
+				break;
+			case 1:
+				tmp2 *= pow(-1, n + 1);
+				break;
+			case 2:
+				tmp2 *= pow(-1, n);
+				break;
+			case 3:
+				break;
+			case 4:
+				tmp2 *= -1;
+				break;
+			case 6:
+				break;
+			default:
+				break;
+			}
+
+			if(tmp1*tmp2 < 0)
+				total_neg_roots++;
+
+			tmp1 = tmp2;
+			if(i != 5)
+				tmp2 = a[i+2];
+		}
 	}
 
 	if(verbose) {
@@ -264,7 +305,7 @@ int main(int argc, char* argv[]) {
 
 
 
-	//find negative roots
+	//find negative root intervals
 	step = (roots_int_neg.r - roots_int_neg.l)/segments;
 	tmp_int.l = roots_int_neg.l;
 	tmp_int.r = roots_int_neg.l + step;
@@ -287,7 +328,7 @@ int main(int argc, char* argv[]) {
 		tmp_int.r += step;
 	}
 
-	//find positive roots
+	//find positive root intervals
 	step = (roots_int_pos.r - roots_int_pos.l)/segments;
 	tmp_int.l = roots_int_pos.l;
 	tmp_int.r = roots_int_pos.l + step;
