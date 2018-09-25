@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
 
 	interval tmp_int;
 
-	set_var(1);	//set default variant
+	var = 1;	//set default variant
 
 	verbose = 0;	//verbose off by default
 	quiet = 0;	//prompt user for input
@@ -33,11 +33,11 @@ int main(int argc, char* argv[]) {
 	while((opt = getopt(argc, argv, "12vhqcis:")) != -1) {
 		switch(opt) {
 		case '1':
-			set_var(1);
+			var = 1;
 			break;
 
 		case '2':
-			set_var(2);
+			var = 2;
 			break;
 
 		case 'v':
@@ -71,6 +71,8 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
+	set_var(var);
+
 	//enter values
 	if(var == 1) {
 		gamma0 = input_fract("gamma0", quiet);
@@ -101,7 +103,7 @@ int main(int argc, char* argv[]) {
 
 	if(verbose | coefs_only) {	//print coefs
 		for(i = 0; i < 7; i++)
-			printf("a[%i] = %e\n", i, a[i]);
+			printf("a[%i] = %e\n", i, get_a(i));
 	}
 	if(coefs_only)
 		return(0);
@@ -127,10 +129,10 @@ int main(int argc, char* argv[]) {
 		newline();
 		printf("Values:");
 		if(var == 1) {
-			printf("[ %e; %e ]\n", fval_1(tmp_int.l, a), fval_1(tmp_int.r, a));
+			printf("[ %e; %e ]\n", fval_1(tmp_int.l), fval_1(tmp_int.r));
 		}
 		else {
-			printf("[ %e; %e ]\n", fval_2(tmp_int.l, a), fval_2(tmp_int.r, a));
+			printf("[ %e; %e ]\n", fval_2(tmp_int.l), fval_2(tmp_int.r));
 		}
 		printf("No more than %i positive roots\n", get_roots_amount(1));
 
@@ -141,10 +143,10 @@ int main(int argc, char* argv[]) {
 		newline();
 		printf("Values:");
 		if(var == 1) {
-			printf("[ %e; %e ]\n", fval_1(tmp_int.l, a), fval_1(tmp_int.r, a));
+			printf("[ %e; %e ]\n", fval_1(tmp_int.l), fval_1(tmp_int.r));
 		}
 		else {
-			printf("[ %e; %e ]\n", fval_2(tmp_int.l, a), fval_2(tmp_int.r, a));
+			printf("[ %e; %e ]\n", fval_2(tmp_int.l), fval_2(tmp_int.r));
 		}
 		printf("No more than %i negative roots\n", get_roots_amount(2));
 	}

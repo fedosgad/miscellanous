@@ -7,49 +7,49 @@ void set_var(int num) {
 	var = num;
 }
 
-FTYPE fval_1(FTYPE x, FTYPE* coef) {
+FTYPE fval_1(FTYPE x) {
 	int i;
 	FTYPE res = 0;
 
 	for(i = 0; i < 7; i++) {
-		res += coef[i]*pow(x, 6 - i);
+		res += a[i]*pow(x, 6 - i);
 	}
 
 	return res;
 }
 
-FTYPE fval_2(FTYPE x, FTYPE* coef) {
+FTYPE fval_2(FTYPE x) {
 	int i;
 	FTYPE res = 0;
 
 	for(i = 0; i < 7; i++) {
 		switch(i) {
 		case 0:
-			res += coef[i]*pow(x, 2*n);
+			res += a[i]*pow(x, 2*n);
 			break;
 
 		case 1:
-			res += coef[i]*pow(x, n + 2);
+			res += a[i]*pow(x, n + 2);
 			break;
 
 		case 2:
-			res += coef[i]*pow(x, n + 1);
+			res += a[i]*pow(x, n + 1);
 			break;
 
 		case 3:
-			res += coef[i]*pow(x, n);
+			res += a[i]*pow(x, n);
 			break;
 
 		case 4:
-			res += coef[i]*pow(x, 2);
+			res += a[i]*pow(x, 2);
 			break;
 
 		case 5:
-			res += coef[i]*x;	
+			res += a[i]*x;
 			break;
 
 		case 6:
-			res += coef[i];
+			res += a[i];
 			break;
 
 		default:
@@ -244,10 +244,10 @@ void find_root_ints(int segments) {
 
 	for(i = 0; i < segments; i++) {
 		if(var == 1) {
-			tmp = fval_1(tmp_int.l, a)*fval_1(tmp_int.r, a);
+			tmp = fval_1(tmp_int.l)*fval_1(tmp_int.r);
 		}
 		else {
-			tmp = fval_2(tmp_int.l, a)*fval_2(tmp_int.r, a);
+			tmp = fval_2(tmp_int.l)*fval_2(tmp_int.r);
 		}
 
 		if(tmp < 0) {	//if sign changes, save current interval
@@ -268,10 +268,10 @@ void find_root_ints(int segments) {
 
 	for(i = 0; i < segments; i++) {
 		if(var == 1) {
-			tmp = fval_1(tmp_int.l, a)*fval_1(tmp_int.r, a);
+			tmp = fval_1(tmp_int.l)*fval_1(tmp_int.r);
 		}
 		else {
-			tmp = fval_2(tmp_int.l, a)*fval_2(tmp_int.r, a);
+			tmp = fval_2(tmp_int.l)*fval_2(tmp_int.r);
 		}
 		
 		if(tmp < 0) {	//if sign changes, save current interval

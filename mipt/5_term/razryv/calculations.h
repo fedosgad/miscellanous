@@ -40,8 +40,8 @@ void initial_guess();
 void find_root_ints(int segments);
 
 //Function/derivative value calculation
-FTYPE fval_1(FTYPE x, FTYPE* coef);	//calculate function value for var. 1
-FTYPE fval_2(FTYPE x, FTYPE* coef);	//same for var. 2
+FTYPE fval_1(FTYPE x);	//calculate function value for var. 1
+FTYPE fval_2(FTYPE x);	//same for var. 2
 
 //Finding roots
 FTYPE find_root_dichotomy();
