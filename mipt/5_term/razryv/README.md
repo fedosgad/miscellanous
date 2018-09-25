@@ -29,7 +29,7 @@ General help (also available using -h option):
 	-c - only calculate an print coefs.
 	-i - only calculate and print intervals
 	-s [n] - divide initial guess into n segments (10000 by default)
-		(NOT ENOUGH to find all roots in soma variants)
+		(NOT ENOUGH to find all roots in some variants)
 
 	Data format:
 	a/b for gamma (for example, "5/3"),
