@@ -21,6 +21,7 @@ FTYPE max_abs(FTYPE* arr, int length);
 FTYPE fval_1(FTYPE x, FTYPE* coef);	//calculate function value for var. 1
 FTYPE fval_2(FTYPE x, FTYPE* coef, FTYPE n);	//same for var. 2
 void print_int(interval* inp);
+void newline();
 
 int main(int argc, char* argv[]) {
 
@@ -209,7 +210,7 @@ int main(int argc, char* argv[]) {
 	n = roundf(n);	//because it's integer anyway
 
 	if(verbose && (var == 2)) {
-		printf("\n");
+		newline();
 		printf("n = %f\n", n);
 	}
 
@@ -270,15 +271,15 @@ int main(int argc, char* argv[]) {
 	}
 
 	if(verbose) {
-		printf("\n");
+		newline();
 		printf("A = %e\n", A);
 		printf("B = %e\n", B);
 	}
 	if(verbose) {
-		printf("\n");
+		newline();
 		printf("Initial positive interval: ");
 		print_int(&roots_int_pos);
-		printf("\n");
+		newline();
 		printf("Values:");
 		if(var == 1) {
 			printf("[ %e; %e ]\n", fval_1(roots_int_pos.l, a), fval_1(roots_int_pos.r, a));
@@ -288,10 +289,10 @@ int main(int argc, char* argv[]) {
 		}
 		printf("No more than %i positive roots\n", total_pos_roots);
 
-		printf("\n");
+		newline();
 		printf("Initial negative interval: ");
 		print_int(&roots_int_neg);
-		printf("\n");
+		newline();
 		printf("Values:");
 		if(var == 1) {
 			printf("[ %e; %e ]\n", fval_1(roots_int_neg.l, a), fval_1(roots_int_neg.r, a));
@@ -356,13 +357,13 @@ int main(int argc, char* argv[]) {
 	}
 
 	if(verbose) {
-		printf("\n");
+		newline();
 		printf("%i root intervals found:\n", roots_found);
 	}
 	if(verbose | intervals_only) {
 		for(i = 0; i < roots_found; i++) {
 			print_int(&(root_int[i]));
-			printf("\n");
+			newline();
 		}
 	}
 	if(intervals_only) {
@@ -493,3 +494,8 @@ void print_int(interval* inp) {
 	return;
 }
 
+void newline() {
+	printf("\n");
+}
+
+FTYPE find_root_dichotomy();
