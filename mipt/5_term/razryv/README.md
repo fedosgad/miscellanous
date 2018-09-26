@@ -23,13 +23,17 @@ General help (also available using -h option):
 
 	Available options:
 	-1, -2 - select variant (1 by default)
-	-v - print debugging information
+	-v - print intermediate information
 	-h - print this help and exit
 	-q - don't promt for input
 	-c - only calculate an print coefs.
 	-i - only calculate and print intervals
-	-s [n] - divide initial guess into n segments (10000 by default)
-		(NOT ENOUGH to find all roots in some variants)
+	-r - only calculate and print roots
+	-s [int] - divide initial guess into [int] segments (10000 by default)
+	-e [float] - find roots with [float] precesion (1r-6 by default)
+	-m [int] - find roots using: 	0 - dichotomy (default)
+					1 - simple iteration
+					2 - Newton method
 
 	Data format:
 	a/b for gamma (for example, "5/3"),
