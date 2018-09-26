@@ -119,14 +119,14 @@ int main(int argc, char* argv[]) {
 
 	if(verbose | coefs_only) {	//print coefs
 		for(i = 0; i < 7; i++)
-			printf("a[%i] = %e\n", i, get_a(i));
+			printf("a[%i] = %Le\n", i, get_a(i));
 	}
 	if(coefs_only)
 		return(0);
 
 	if(verbose && (var == 2)) {
 		newline();
-		printf("n = %f\n", get_n());
+		printf("n = %Lf\n", get_n());
 	}
 
 	estimate_amount();
@@ -134,8 +134,8 @@ int main(int argc, char* argv[]) {
 
 	if(verbose) {
 		newline();
-		printf("A = %e\n", get_A());
-		printf("B = %e\n", get_B());
+		printf("A = %Le\n", get_A());
+		printf("B = %Le\n", get_B());
 	}
 	if(verbose) {
 		tmp_int = get_roots_int(1);
@@ -145,10 +145,10 @@ int main(int argc, char* argv[]) {
 		newline();
 		printf("Values:");
 		if(var == 1) {
-			printf("[ %e; %e ]\n", fval_1(tmp_int.l), fval_1(tmp_int.r));
+			printf("[ %Le; %Le ]\n", fval_1(tmp_int.l), fval_1(tmp_int.r));
 		}
 		else {
-			printf("[ %e; %e ]\n", fval_2(tmp_int.l), fval_2(tmp_int.r));
+			printf("[ %Le; %Le ]\n", fval_2(tmp_int.l), fval_2(tmp_int.r));
 		}
 		printf("No more than %i positive roots\n", get_roots_amount(1));
 
@@ -159,10 +159,10 @@ int main(int argc, char* argv[]) {
 		newline();
 		printf("Values:");
 		if(var == 1) {
-			printf("[ %e; %e ]\n", fval_1(tmp_int.l), fval_1(tmp_int.r));
+			printf("[ %Le; %Le ]\n", fval_1(tmp_int.l), fval_1(tmp_int.r));
 		}
 		else {
-			printf("[ %e; %e ]\n", fval_2(tmp_int.l), fval_2(tmp_int.r));
+			printf("[ %Le; %Le ]\n", fval_2(tmp_int.l), fval_2(tmp_int.r));
 		}
 		printf("No more than %i negative roots\n", get_roots_amount(2));
 	}
@@ -192,7 +192,7 @@ int main(int argc, char* argv[]) {
 	}
 	if(verbose | roots_only) {
 		for(i = 0; i < get_roots_amount(0); i++)
-			printf("%.10e\n", roots[i]);
+			printf("%.10Le\n", roots[i]);
 	}
 	if(roots_only) {
 		free(roots);
@@ -235,7 +235,7 @@ FTYPE input_fract(char* var_name, int quiet) {
 
 	if(!quiet)
 		printf("%s = ", var_name);
-	scanf("%lf/%lf", &num, &denom);
+	scanf("%Lf/%Lf", &num, &denom);
 
 	return num/denom;
 }
@@ -246,13 +246,13 @@ FTYPE input_exp(char* var_name, int quiet) {
 
 	if(!quiet)
 		printf("%s = ", var_name);
-	scanf("%lf", &mant);
+	scanf("%Lf", &mant);
 
 	return mant;
 }
 
 void print_int(interval inp) {
-	printf("[ %e; %e ]", inp.l, inp.r);
+	printf("[ %Le; %Le ]", inp.l, inp.r);
 	return;
 }
 

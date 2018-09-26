@@ -1,4 +1,4 @@
-#define FTYPE double //change this to double for greater precesion
+#define FTYPE long double //change this to double for greater precesion
 
 struct interval {
 	FTYPE l;
