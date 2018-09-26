@@ -11,7 +11,7 @@ all: compile
 debug:
 	gcc -o $(NAME) $(NAME).c -lm -g
 
-calculations.o:
+calculations.o: calculations.c
 	gcc -c -o calculations.o calculations.c
 
 clean:

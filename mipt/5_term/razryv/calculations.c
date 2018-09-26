@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "calculations.h"
 
@@ -79,8 +80,35 @@ FTYPE sq(FTYPE x) {
 	return pow(x, 2);
 }
 
-FTYPE find_root_dichotomy() {
+FTYPE find_root_dichotomy(interval init_guess, FTYPE epsilon) {
+	interval tmp_int;
+	FTYPE lval, mval, mid;
 
+	FTYPE (*fval) (FTYPE);	//function pointers!!!
+
+	if (var == 1)
+		fval = fval_1;
+	else
+		fval = fval_2;
+
+	tmp_int.l = init_guess.l;
+	tmp_int.r = init_guess.r;
+
+	while(tmp_int.r - tmp_int.l > epsilon) {
+		mid = (tmp_int.l + tmp_int.r)/2;
+
+		lval = (*fval)(tmp_int.l);
+		mval = (*fval)(mid);
+
+		if(lval*mval < 0) {
+			tmp_int.r = mid;
+		}
+		else {
+			tmp_int.l = mid;
+		}
+	}
+
+	return (tmp_int.l + tmp_int.r)/2;
 }
 
 void calc_interm_vars() {
@@ -285,6 +313,38 @@ void find_root_ints(int segments) {
 		tmp_int.r += step;
 	}
 
+}
+
+void find_roots(int method, FTYPE epsilon) {
+	int i, roots_calculated;
+	FTYPE tmp;
+
+	roots = NULL;
+	roots_calculated = 0;
+
+	for(i = 0; i < roots_found; i++) {
+		switch(method) {
+		case 0:
+			tmp = find_root_dichotomy(root_int[i], epsilon);
+			break;
+
+		case 1:
+			printf("Not implemented\n");
+			exit(1);
+
+		case 2:
+			printf("Not implemented");
+			exit(1);
+
+		default:
+			printf("Incorrect method selection\n");
+			exit(1);
+		}
+
+		roots_calculated++;
+		roots = (FTYPE*)realloc((void*)roots, roots_calculated*sizeof(FTYPE));
+		roots[roots_calculated - 1] = tmp;
+	}
 }
 
 //Getter functions

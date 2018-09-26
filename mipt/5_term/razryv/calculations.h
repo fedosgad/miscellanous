@@ -13,7 +13,7 @@ FTYPE gamma0, rho0, P0, U0;	//vars for initial data
 FTYPE gamma3, rho3, P3, U3;
 FTYPE C3; 
 interval* root_int;
-int total_roots;
+FTYPE* roots;
 
 //Internal variables
 static int var;
@@ -38,13 +38,14 @@ void calc_coefs();
 void estimate_amount();
 void initial_guess();
 void find_root_ints(int segments);
+void find_roots(int method, FTYPE epsilon);
 
 //Function/derivative value calculation
 FTYPE fval_1(FTYPE x);	//calculate function value for var. 1
 FTYPE fval_2(FTYPE x);	//same for var. 2
 
 //Finding roots
-FTYPE find_root_dichotomy();
+static FTYPE find_root_dichotomy(interval init_guess, FTYPE epsilon);
 
 //Support functions
 static FTYPE max_abs(FTYPE* arr, int length);

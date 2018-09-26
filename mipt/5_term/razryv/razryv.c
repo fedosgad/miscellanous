@@ -14,10 +14,11 @@ void newline();
 
 int main(int argc, char* argv[]) {
 
-	int i, opt, var, verbose, quiet;
-	int coefs_only, intervals_only;
+	int i, opt, var, verbose, quiet, method;
+	int coefs_only, intervals_only, roots_only;
 
 	int segments;
+
 
 	interval tmp_int;
 
@@ -27,10 +28,13 @@ int main(int argc, char* argv[]) {
 	quiet = 0;	//prompt user for input
 	coefs_only = 0;	//don't stop on coefs
 	intervals_only = 0;	//don't stop on intervals
+	roots_only = 0;	//don't stop on roots
 
+	method = 0;	//default method - dichotomy
 	segments = 10000;
+	FTYPE epsilon = 1e-6;
 
-	while((opt = getopt(argc, argv, "12vhqcis:")) != -1) {
+	while((opt = getopt(argc, argv, "12vhqcirs:e:m:")) != -1) {
 		switch(opt) {
 		case '1':
 			var = 1;
@@ -63,6 +67,18 @@ int main(int argc, char* argv[]) {
 
 		case 's':
 			segments = atoi(optarg);
+			break;
+
+		case 'e':
+			epsilon = atof(optarg);
+			break;
+
+		case 'm':
+			method = atoi(optarg);
+			break;
+
+		case 'r':
+			roots_only = 1;
 			break;
 
 		default:
@@ -168,6 +184,23 @@ int main(int argc, char* argv[]) {
 		return 0;
 	}
 
+	find_roots(method, epsilon);
+
+	if(verbose) {
+		newline();
+		printf("Roots:\n");
+	}
+	if(verbose | roots_only) {
+		for(i = 0; i < get_roots_amount(0); i++)
+			printf("%.10e\n", roots[i]);
+	}
+	if(roots_only) {
+		free(roots);
+		return 0;
+	}
+
+	free(roots);
+
 	free(root_int);
 
 	return 0;
@@ -183,7 +216,12 @@ void usage() {
 		"-q - don't promt for input\n"
 		"-c - only calculate an print coefs.\n"
 		"-i - only calculate and print intervals\n"
-		"-s [n] - divide initial guess into n segments (10000 by default)\n"
+		"-r - only calculate and print roots\n"
+		"-s [int] - divide initial guess into [int] segments (10000 by default)\n"
+		"-e [float] - find roots with [float] precesion (1r-6 by default)\n"
+		"-m [int] - find roots using: 	0 - dichotomy (default)\n"
+		"				1 - simple iteration\n"
+		"				2 - Newton method\n"
 		"\n"
 		"Data format:\n"
 		"a/b for gamma (for example, \"5/3\"),\n"
