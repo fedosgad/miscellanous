@@ -30,7 +30,7 @@ General help (also available using -h option):
 	-i - only calculate and print intervals
 	-r - only calculate and print roots
 	-s [int] - divide initial guess into [int] segments (10000 by default)
-	-e [float] - find roots with [float] precesion (1r-6 by default)
+	-e [float] - find roots with [float] precesion (1e-6 by default)
 	-m [int] - find roots using: 	0 - dichotomy (default)
 					1 - simple iteration
 					2 - Newton method
