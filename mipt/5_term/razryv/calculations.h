@@ -19,6 +19,7 @@ FTYPE* answers;
 //Internal variables
 static int var;
 static int roots_found, total_pos_roots, total_neg_roots;
+static int total_answers;
 static interval roots_int_pos, roots_int_neg;
 static FTYPE a[7];	//coefs.
 
@@ -33,6 +34,7 @@ FTYPE get_A();
 FTYPE get_B();
 interval get_roots_int(int type);
 int get_roots_amount(int type);
+int get_total_answers();
 
 //Intermediate action functions
 void calc_interm_vars();

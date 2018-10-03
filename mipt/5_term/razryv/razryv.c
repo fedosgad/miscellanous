@@ -205,11 +205,26 @@ int main(int argc, char* argv[]) {
 		newline();
 		printf("Answers:\n");
 	}
-	for(i = 0; i < 2*get_roots_amount(1); i++) {
-		printf("D0 = %Le\nD3 = %Le\n", answers[2*i], answers[2*i + 1]);
-		if(i%2 == 1)
-			newline();
+	if(var == 1) {
+		for(i = 0; i < get_total_answers(); i++) {
+			if(i%2 == 0)
+				printf("D0 = %Le\n", answers[i]);
+			else
+				printf("D3 = %Le\n", answers[i]);
+
+			if(i%4 == 3)
+				newline();
+		}
 	}
+	else {
+		for(i = 0; i < get_total_answers(); i++) {
+			printf("D0 = %Le\n", answers[i]);
+
+			if(i%2 == 1)
+				newline();
+		}
+	}
+
 
 	free(roots);
 	free(root_int);

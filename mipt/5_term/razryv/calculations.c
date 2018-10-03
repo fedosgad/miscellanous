@@ -137,55 +137,79 @@ void calc_interm_vars() {
 
 }
 
-void calc_answers() {	//only calculated for positive roots
+void calc_answers() {
 
-	int i, answers_calculated;
+	int i;
 
 	answers = NULL;
-	answers_calculated = 0;
+	total_answers = 0;
+
 
 	if(var == 1) {
 		for(i = 0; i < get_roots_amount(0); i++) {
 
 			Y = roots[i];
-			if(Y < 0)
+			if(Y < 0)	//only calculate for positive roots
 				continue;
 
 			//calculate more intermediate vars
 			rho1 = rho0 * ((gamma0 - 1) + (gamma0 + 1)*Y)/((gamma0 + 1) + (gamma0 - 1)*Y);
 			P1 = P0 * Y;
 
-			U1 = U0 + C0*sqrt(2)*(Y - 1)/sqrt(gamma0*(gamma0 - 1)*(1 + alpha0*Y));
+			U1 = U0 + C0*sqrt(2)*(Y - 1)/sqrtl(gamma0*(gamma0 - 1)*(1 + alpha0*Y));
 
 			D0 = (rho0*U0 - rho1*U1)/(rho0 - rho1);
 
-			answers_calculated++;
-			answers = (FTYPE*)realloc((void*)answers, answers_calculated*sizeof(FTYPE));
-			answers[answers_calculated - 1] = D0;
+			total_answers++;
+			answers = (FTYPE*)realloc((void*)answers, total_answers*sizeof(FTYPE));
+			answers[total_answers - 1] = D0;
 
 			D3 = U3 - (P3 - P1)/(rho3*(U1 - U3));
 
-			answers_calculated++;
-			answers = (FTYPE*)realloc((void*)answers, answers_calculated*sizeof(FTYPE));
-			answers[answers_calculated - 1] = D3;
+			total_answers++;
+			answers = (FTYPE*)realloc((void*)answers, total_answers*sizeof(FTYPE));
+			answers[total_answers - 1] = D3;
 
-			U1 = U0 - C0*sqrt(2)*(Y - 1)/sqrt(gamma0*(gamma0 - 1)*(1 + alpha0*Y));
+			U1 = U0 - C0*sqrt(2)*(Y - 1)/sqrtl(gamma0*(gamma0 - 1)*(1 + alpha0*Y));
 
 			D0 = (rho0*U0 - rho1*U1)/(rho0 - rho1);
 
-			answers_calculated++;
-			answers = (FTYPE*)realloc((void*)answers, answers_calculated*sizeof(FTYPE));
-			answers[answers_calculated - 1] = D0;
+			total_answers++;
+			answers = (FTYPE*)realloc((void*)answers, total_answers*sizeof(FTYPE));
+			answers[total_answers - 1] = D0;
 
 			D3 = U3 - (P3 - P1)/(rho3*(U1 - U3));
 
-			answers_calculated++;
-			answers = (FTYPE*)realloc((void*)answers, answers_calculated*sizeof(FTYPE));
-			answers[answers_calculated - 1] = D3;
+			total_answers++;
+			answers = (FTYPE*)realloc((void*)answers, total_answers*sizeof(FTYPE));
+			answers[total_answers - 1] = D3;
 		}
 	}
 	else {
-		
+		for(i = 0; i < get_roots_amount(0); i++) {
+			Z = roots[i];
+			if(Z < 0)
+				continue;
+
+			P1 = P3*pow(Z, n);
+			Y = P1/P0;
+			rho1 = rho0 * ((gamma0 - 1) + (gamma0 + 1)*Y)/((gamma0 + 1) + (gamma0 - 1)*Y);
+			C0 = sqrt(gamma0*P0/rho0);
+
+			U1 = U0 + C0*(Y - 1)/sqrtl(gamma0*(gamma0 - 1)*(1 + (gamma0 + 1)*Y/(gamma0 - 1))/2);
+			D0 = (rho0*U0 - rho1*U1)/(rho0 - rho1);
+
+			total_answers++;
+			answers = (FTYPE*)realloc((void*)answers, total_answers*sizeof(FTYPE));
+			answers[total_answers - 1] = D0;
+
+			U1 = U0 - C0*(Y - 1)/sqrtl(gamma0*(gamma0 - 1)*(1 + (gamma0 + 1)*Y/(gamma0 - 1))/2);
+			D0 = (rho0*U0 - rho1*U1)/(rho0 - rho1);
+
+			total_answers++;
+			answers = (FTYPE*)realloc((void*)answers, total_answers*sizeof(FTYPE));
+			answers[total_answers - 1] = D0;
+		}
 	}
 }
 
@@ -435,5 +459,9 @@ int get_roots_amount(int type) {	//same, but also type == 0 -> total (after they
 	default:
 		break;
 	}
+}
+
+int get_total_answers() {
+	return total_answers;
 }
 

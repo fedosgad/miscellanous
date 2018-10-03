@@ -9,7 +9,8 @@ all: compile
 	./gen_results.sh
 
 debug:
-	gcc -o $(NAME) $(NAME).c -lm -g
+	gcc -c -o calculations.o calculations.c -g
+	gcc -o $(NAME) $(NAME).c calculations.o -lm -g
 
 calculations.o: calculations.c
 	gcc -c -o calculations.o calculations.c
