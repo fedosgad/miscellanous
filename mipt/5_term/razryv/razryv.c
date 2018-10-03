@@ -30,11 +30,10 @@ int main(int argc, char* argv[]) {
 	intervals_only = 0;	//don't stop on intervals
 	roots_only = 0;	//don't stop on roots
 
-	method = 0;	//default method - dichotomy
 	segments = 10000;
 	FTYPE epsilon = 1e-6;
 
-	while((opt = getopt(argc, argv, "12vhqcirs:e:m:")) != -1) {
+	while((opt = getopt(argc, argv, "12vhqcirs:e:")) != -1) {
 		switch(opt) {
 		case '1':
 			var = 1;
@@ -71,10 +70,6 @@ int main(int argc, char* argv[]) {
 
 		case 'e':
 			epsilon = atof(optarg);
-			break;
-
-		case 'm':
-			method = atoi(optarg);
 			break;
 
 		case 'r':
@@ -184,7 +179,7 @@ int main(int argc, char* argv[]) {
 		return 0;
 	}
 
-	find_roots(method, epsilon);
+	find_roots(epsilon);
 
 	if(verbose) {
 		newline();
@@ -246,9 +241,6 @@ void usage() {
 		"-r - only calculate and print roots\n"
 		"-s [int] - divide initial guess into [int] segments (10000 by default)\n"
 		"-e [float] - find roots with [float] precesion (1r-6 by default)\n"
-		"-m [int] - find roots using: 	0 - dichotomy (default)\n"
-		"				1 - simple iteration\n"
-		"				2 - Newton method\n"
 		"\n"
 		"Data format:\n"
 		"a/b for gamma (for example, \"5/3\"),\n"

@@ -43,7 +43,7 @@ void calc_answers();
 void estimate_amount();
 void initial_guess();
 void find_root_ints(int segments);
-void find_roots(int method, FTYPE epsilon);
+void find_roots(FTYPE epsilon);
 
 //Function/derivative value calculation
 FTYPE fval_1(FTYPE x);	//calculate function value for var. 1

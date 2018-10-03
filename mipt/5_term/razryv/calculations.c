@@ -391,7 +391,7 @@ void find_root_ints(int segments) {
 
 }
 
-void find_roots(int method, FTYPE epsilon) {
+void find_roots(FTYPE epsilon) {
 	int i, roots_calculated;
 	FTYPE tmp;
 
@@ -399,23 +399,7 @@ void find_roots(int method, FTYPE epsilon) {
 	roots_calculated = 0;
 
 	for(i = 0; i < roots_found; i++) {
-		switch(method) {
-		case 0:
-			tmp = find_root_dichotomy(root_int[i], epsilon);
-			break;
-
-		case 1:
-			printf("Not implemented\n");
-			exit(1);
-
-		case 2:
-			printf("Not implemented");
-			exit(1);
-
-		default:
-			printf("Incorrect method selection\n");
-			exit(1);
-		}
+		tmp = find_root_dichotomy(root_int[i], epsilon);
 
 		roots_calculated++;
 		roots = (FTYPE*)realloc((void*)roots, roots_calculated*sizeof(FTYPE));

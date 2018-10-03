@@ -1,4 +1,4 @@
-"All-in-one":
+"All-in-one" (compile and generate results for all variants):
 
 	make all
 
@@ -31,9 +31,6 @@ General help (also available using -h option):
 	-r - only calculate and print roots
 	-s [int] - divide initial guess into [int] segments (10000 by default)
 	-e [float] - find roots with [float] precesion (1e-6 by default)
-	-m [int] - find roots using: 	0 - dichotomy (default)
-					1 - simple iteration
-					2 - Newton method
 
 	Data format:
 	a/b for gamma (for example, "5/3"),
