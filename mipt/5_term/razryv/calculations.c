@@ -137,6 +137,58 @@ void calc_interm_vars() {
 
 }
 
+void calc_answers() {	//only calculated for positive roots
+
+	int i, answers_calculated;
+
+	answers = NULL;
+	answers_calculated = 0;
+
+	if(var == 1) {
+		for(i = 0; i < get_roots_amount(0); i++) {
+
+			Y = roots[i];
+			if(Y < 0)
+				continue;
+
+			//calculate more intermediate vars
+			rho1 = rho0 * ((gamma0 - 1) + (gamma0 + 1)*Y)/((gamma0 + 1) + (gamma0 - 1)*Y);
+			P1 = P0 * Y;
+
+			U1 = U0 + C0*sqrt(2)*(Y - 1)/sqrt(gamma0*(gamma0 - 1)*(1 + alpha0*Y));
+
+			D0 = (rho0*U0 - rho1*U1)/(rho0 - rho1);
+
+			answers_calculated++;
+			answers = (FTYPE*)realloc((void*)answers, answers_calculated*sizeof(FTYPE));
+			answers[answers_calculated - 1] = D0;
+
+			D3 = U3 - (P3 - P1)/(rho3*(U1 - U3));
+
+			answers_calculated++;
+			answers = (FTYPE*)realloc((void*)answers, answers_calculated*sizeof(FTYPE));
+			answers[answers_calculated - 1] = D3;
+
+			U1 = U0 - C0*sqrt(2)*(Y - 1)/sqrt(gamma0*(gamma0 - 1)*(1 + alpha0*Y));
+
+			D0 = (rho0*U0 - rho1*U1)/(rho0 - rho1);
+
+			answers_calculated++;
+			answers = (FTYPE*)realloc((void*)answers, answers_calculated*sizeof(FTYPE));
+			answers[answers_calculated - 1] = D0;
+
+			D3 = U3 - (P3 - P1)/(rho3*(U1 - U3));
+
+			answers_calculated++;
+			answers = (FTYPE*)realloc((void*)answers, answers_calculated*sizeof(FTYPE));
+			answers[answers_calculated - 1] = D3;
+		}
+	}
+	else {
+		
+	}
+}
+
 void calc_coefs() {
 	if(var == 1) {
 		a[0] = sq(alpha0*e3 - alpha3*X*e0);	//Y^6

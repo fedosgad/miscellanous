@@ -1,8 +1,9 @@
-\#!/bin/sh
+#!/bin/sh
 
 mkdir -p results/coefs
 mkdir -p results/root_intervals
 mkdir -p results/roots
+mkdir -p results/answers
 
 echo "Calculating 1 var. coefs..."
 
@@ -45,5 +46,20 @@ for i in $(seq 8)
 	do
 		./razryv -2 -q -r -s 1000000 < data/var_2.$i > results/roots/roots_2.$i
 done
+
+echo "Calculating 1 var. answers..."
+
+for i in $(seq 8)
+	do
+		./razryv -1 -q -s 1000000 < data/var_1.$i > results/answers/answers_1.$i
+done
+
+
+#echo "Calculating 2 var. answers..."
+
+#for i in $(seq 8)
+#	do
+#		./razryv -2 -q -s 1000000 < data/var_2.$i > results/answers/answers_2.$i
+#done
 
 echo "Done"

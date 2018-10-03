@@ -14,6 +14,7 @@ FTYPE gamma3, rho3, P3, U3;
 FTYPE C3; 
 interval* root_int;
 FTYPE* roots;
+FTYPE* answers;
 
 //Internal variables
 static int var;
@@ -23,6 +24,7 @@ static FTYPE a[7];	//coefs.
 
 static FTYPE X, alpha0, alpha3, e0, e3, C0;	//intermediate vars
 static FTYPE n, mu, nu, Z, Y, A, B;
+static FTYPE rho1, P1, U1, D0, D3;
 
 //Getter functions
 FTYPE get_a(int i);
@@ -35,6 +37,7 @@ int get_roots_amount(int type);
 //Intermediate action functions
 void calc_interm_vars();
 void calc_coefs();
+void calc_answers();
 void estimate_amount();
 void initial_guess();
 void find_root_ints(int segments);

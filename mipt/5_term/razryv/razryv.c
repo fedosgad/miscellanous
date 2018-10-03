@@ -15,7 +15,7 @@ void newline();
 int main(int argc, char* argv[]) {
 
 	int i, opt, var, verbose, quiet, method;
-	int coefs_only, intervals_only, roots_only;
+	int coefs_only, intervals_only, roots_only, answers_only;
 
 	int segments;
 
@@ -199,9 +199,21 @@ int main(int argc, char* argv[]) {
 		return 0;
 	}
 
-	free(roots);
+	calc_answers();
 
+	if(verbose) {
+		newline();
+		printf("Answers:\n");
+	}
+	for(i = 0; i < 2*get_roots_amount(1); i++) {
+		printf("D0 = %Le\nD3 = %Le\n", answers[2*i], answers[2*i + 1]);
+		if(i%2 == 1)
+			newline();
+	}
+
+	free(roots);
 	free(root_int);
+	free(answers);
 
 	return 0;
 }
