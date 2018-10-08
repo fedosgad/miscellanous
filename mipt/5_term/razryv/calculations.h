@@ -16,6 +16,9 @@ interval* root_int;
 FTYPE* roots;
 FTYPE* answers;
 
+FTYPE* a_cr;	//critical speed
+FTYPE* lambda;
+
 //Internal variables
 static int var;
 static int roots_found, total_pos_roots, total_neg_roots;

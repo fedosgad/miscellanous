@@ -142,6 +142,8 @@ void calc_answers() {
 	int i;
 
 	answers = NULL;
+	a_cr = NULL;
+	lambda = NULL;
 	total_answers = 0;
 
 
@@ -164,6 +166,13 @@ void calc_answers() {
 			answers = (FTYPE*)realloc((void*)answers, total_answers*sizeof(FTYPE));
 			answers[total_answers - 1] = D0;
 
+			a_cr = (FTYPE*)realloc((void*)a_cr, (total_answers/4 + 1)*sizeof(FTYPE));
+			a_cr[total_answers/4] = sqrt((P1 - P0)/(rho1 - rho0));
+
+			lambda = (FTYPE*)realloc((void*)lambda, (total_answers + 1)*sizeof(FTYPE));
+			lambda[total_answers - 1] = (U1 - D0)/a_cr[total_answers/4];
+			lambda[total_answers] = (U0 - D0)/a_cr[total_answers/4];
+
 			D3 = U3 - (P3 - P1)/(rho3*(U1 - U3));
 
 			total_answers++;
@@ -177,6 +186,10 @@ void calc_answers() {
 			total_answers++;
 			answers = (FTYPE*)realloc((void*)answers, total_answers*sizeof(FTYPE));
 			answers[total_answers - 1] = D0;
+
+			lambda = (FTYPE*)realloc((void*)lambda, (total_answers + 1)*sizeof(FTYPE));
+			lambda[total_answers - 1] = (U1 - D0)/a_cr[total_answers/4];
+			lambda[total_answers] = (U0 - D0)/a_cr[total_answers/4];
 
 			D3 = U3 - (P3 - P1)/(rho3*(U1 - U3));
 
@@ -203,14 +216,27 @@ void calc_answers() {
 			answers = (FTYPE*)realloc((void*)answers, total_answers*sizeof(FTYPE));
 			answers[total_answers - 1] = D0;
 
+			a_cr = (FTYPE*)realloc((void*)a_cr, (total_answers/2 + 1)*sizeof(FTYPE));
+			a_cr[total_answers/2] = sqrt((P1 - P0)/(rho1 - rho0));
+
+			lambda = (FTYPE*)realloc((void*)lambda, (2*total_answers)*sizeof(FTYPE));
+			lambda[2*total_answers - 2] = (U1 - D0)/a_cr[(total_answers - 1)/2];
+			lambda[2*total_answers - 1] = (U0 - D0)/a_cr[(total_answers - 1)/2];
+
 			U1 = U0 - C0*(Y - 1)/sqrtl(gamma0*(gamma0 - 1)*(1 + (gamma0 + 1)*Y/(gamma0 - 1))/2);
 			D0 = (rho0*U0 - rho1*U1)/(rho0 - rho1);
 
 			total_answers++;
 			answers = (FTYPE*)realloc((void*)answers, total_answers*sizeof(FTYPE));
 			answers[total_answers - 1] = D0;
+
+			lambda = (FTYPE*)realloc((void*)lambda, (2*total_answers)*sizeof(FTYPE));
+			lambda[2*total_answers - 2] = (U1 - D0)/a_cr[(total_answers - 1)/2];
+			lambda[2*total_answers - 1] = (U0 - D0)/a_cr[(total_answers - 1)/2];
 		}
 	}
+
+	
 }
 
 void calc_coefs() {

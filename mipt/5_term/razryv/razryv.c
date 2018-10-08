@@ -204,8 +204,14 @@ int main(int argc, char* argv[]) {
 		for(i = 0; i < get_total_answers(); i++) {
 			if(i%2 == 0)
 				printf("D0 = %Le\n", answers[i]);
-			else
+			else {
 				printf("D3 = %Le\n", answers[i]);
+				printf("Lambda_1 = %Le\n", lambda[i - 1]);
+				printf("Lambda_2 = %Le\n", lambda[i]);
+			}
+
+			if(i%4 == 3)
+				printf("a_cr^2 = %Le\n", a_cr[i/4]*a_cr[i/4]);
 
 			if(i%4 == 3)
 				newline();
@@ -214,16 +220,22 @@ int main(int argc, char* argv[]) {
 	else {
 		for(i = 0; i < get_total_answers(); i++) {
 			printf("D0 = %Le\n", answers[i]);
+			printf("Lambda_1 = %Le\n", lambda[2*i]);
+			printf("Lambda_2 = %Le\n", lambda[2*i + 1]);
+
+			if(i%2 == 1)
+				printf("a_cr^2 = %Le\n", a_cr[i/2]*a_cr[i/2]);
 
 			if(i%2 == 1)
 				newline();
 		}
 	}
 
-
 	free(roots);
 	free(root_int);
 	free(answers);
+	free(a_cr);
+	free(lambda);
 
 	return 0;
 }
