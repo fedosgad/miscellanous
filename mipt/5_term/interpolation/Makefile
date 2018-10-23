@@ -3,13 +3,13 @@ NAME = interpolate
 .PHONY: compile all clean debug
 
 compile:
-	gcc -o $(NAME) $(NAME).c
+	g++ -o $(NAME) $(NAME).cpp
 
 all: compile
 	./gen_results.sh
 
 debug:
-	gcc -o $(NAME) $(NAME).c -g
+	g++ -o $(NAME) $(NAME).cpp -g
 
 clean:
 	rm -f *.o
