@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <utility>
 #include <cmath>
 
 #define FTYPE float
@@ -31,6 +32,10 @@ public:
 		coef[n - pow] = val;
 	}
 
+	FTYPE get_coef(int pow) {
+		return coef[n - pow];
+	}
+
 	int get_n() {
 		return n;
 	}
@@ -46,20 +51,59 @@ public:
 
 };
 
+class spline_segment {
+private:
+	polynomial poly;
+
+	FTYPE border_l;
+	FTYPE border_r;
+
+public:
+	spline_segment() {}
+
+	spline_segment(polynomial _poly, FTYPE _border_l, FTYPE _border_r) {
+		poly = _poly;
+		border_l = _border_l;
+		border_r = _border_r;
+	}
+
+	FTYPE get_border_l() {
+		return border_l;
+	}
+
+	FTYPE get_border_r() {
+		return border_r;
+	}
+
+	FTYPE val(FTYPE x) {
+		return poly.val(x);
+	}
+
+};
+
 int main() {
 	FTYPE x;
-	polynomial poly(2);
+	int n;
 
-	poly.set_coef(0, 1);
-	poly.set_coef(1, 1);
-	poly.set_coef(2, 1);
+	vector< pair< FTYPE, FTYPE > > data;	//initial data
+	vector< spline_segment > spline;	//resulting cubic spline
 
-	polynomial der_poly = poly.deriv();
+	cout << "Amount of values: ";
+	cin >> n;
 
-	cin >> x;
+	cout << "(x;y) pairs (space-separated x and y)" << endl;
 
-	cout << poly.val(x) << endl;
-	cout << der_poly.val(x) << endl;
+	for(int i = 0; i < n; i++) {	//enter (x;y) pairs
+		FTYPE tmp_x, tmp_y;
+		cin >> tmp_x >> tmp_y;
+		data.push_back( make_pair(tmp_x, tmp_y) );
+	}
+
+	polynomial newton_poly(n);
+
+	for(int i = 0; i < n; i++) {	//calculate Newton's poly's coefs
+		
+	}
 
 	return 0;
 }
