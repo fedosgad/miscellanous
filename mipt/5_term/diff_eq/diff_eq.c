@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <math.h>
-#include <float.h>
 
 #define FTYPE float
 
@@ -9,7 +8,7 @@
 #define EPSILON 1e-4
 #define Y_LB 1.0	//Y at left border
 #define K 4
-#define H 0.1
+#define H 0.5
 
 FTYPE f(FTYPE x, FTYPE y);
 
@@ -56,7 +55,6 @@ int main() {
 			for(i = 1; i < 11; i++) {	//save value if needed
 				if(fabs(cur_x - (LEFT_BORDER + i*step)) < h/2) {
 					cur_y_vals[i] = cur_y;
-					//~ printf("Saved %e as y[%i]\n", cur_y, i);
 					break;
 				}
 			}
@@ -107,6 +105,5 @@ int main() {
 
 FTYPE f(FTYPE x, FTYPE y) {
 	return (2*pow(x, 3) + pow(x, 2) - pow(y, 2))/(2*pow(x, 2)*y);
-	//~ return x;
 }
 
